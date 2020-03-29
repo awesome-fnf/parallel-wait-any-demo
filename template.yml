@@ -1,0 +1,47 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  flowCallback:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: test
+      Policies:
+        - Version: "1"
+          Statement:
+            - Effect: Allow
+              Action:
+                - fnf:ReportTaskSucceeded
+                - fnf:ReportTaskFailed
+              Resource: '*'
+    callback:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Handler: index.handler
+        Runtime: python3
+        Timeout: 60
+        MemorySize: 128
+        CodeUri: functions/callback
+
+  mainFlowTest:
+    Type: 'Aliyun::Serverless::Flow'
+    DependsOn:
+      - subFlow
+    Properties:
+      Description: 'mainflow'
+      Policies:
+        - Version: "1"
+          Statement:
+            - Effect: Allow
+              Action:
+                - fnf:StartExecution
+              Resource: '*'
+      DefinitionUri: flows/main.flow.yaml
+  subFlowTest:
+    Type: 'Aliyun::Serverless::Flow'
+    DependsOn:
+      - flowCallback
+    Properties:
+      Description: 'subflow'
+      Policies:
+        - AliyunFCInvocationAccess
+      DefinitionUri: flows/subflow.flow.yaml

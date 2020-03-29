@@ -1,0 +1,36 @@
+version: v1
+type: flow
+steps:
+  - type: parallel
+    name: myparallel
+    branches:
+      - steps:
+        - type: task
+          name: task1
+          resourceArn: !Ref flowCallback/callback
+          inputMappings:
+            - target: key
+              source: key1
+            - target: task_token
+              source: $input.task_token
+      - steps:
+        - type: task
+          name: task2
+          resourceArn: !Ref flowCallback/callback
+          inputMappings:
+            - target: key
+              source: key2
+            - target: task_token
+              source: $input.task_token
+      - steps:
+        - type: task
+          name: task3
+          resourceArn: !Ref flowCallback/callback
+          inputMappings:
+            - target: key
+              source: key3
+            - target: task_token
+              source: $input.task_token
+    outputMappings:
+      - target: result
+        source: $local[*].status

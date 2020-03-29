@@ -1,0 +1,14 @@
+version: v1
+type: flow
+steps:
+  - type: task
+    name: subflow
+    resourceArn: acs:fnf:::flow/subFlowTest
+    pattern: waitForCallback
+    inputMappings:
+      - target: task_token
+        source: $context.task.token
+    serviceParams: 
+      Input: $
+  - type: pass
+    name: pass
